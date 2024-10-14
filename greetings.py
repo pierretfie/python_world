@@ -2,6 +2,7 @@
 import nltk
 from nltk.tokenize import word_tokenize
 nltk.download('punkt')
+nltk.download('punkt_tab')
 #first we need a dataset for possible greetings(we can make it formal)
 def greet_response (user_input):
     #we will use a dictionary to map the user's input to a response
