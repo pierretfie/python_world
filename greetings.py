@@ -1,4 +1,4 @@
-#a model for answering greetings
+#a model for answering greetings(rule-based model)
 from subprocess import run
 import random
 import nltk
@@ -50,5 +50,6 @@ except Exception as e:
     engine.runAndWait()
 
 #increase the dataset
-#build a model that would handle greetings
+#build a model that would handle greetings(use pretrained  model)
+
 
