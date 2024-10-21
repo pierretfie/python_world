@@ -48,3 +48,7 @@ except Exception as e:
     engine.setProperty('rate', 190)
     engine.say(response)
     engine.runAndWait()
+
+#increase the dataset
+#build a model that would handle greetings
+
