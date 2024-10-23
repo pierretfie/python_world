@@ -21,3 +21,6 @@ dataset = Dataset.from_dict(data)
 def tokenize_function(example):
     return tokenizer(example['text'], padding='max_length', truncation=True)
 tokenized_datasets = dataset.map(tokenize_function, batched=True)
+
+#fine tuning the GPT-2
+#define training arguments
