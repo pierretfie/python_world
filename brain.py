@@ -21,10 +21,13 @@ data = {
 }
 
 dataset = Dataset.from_dict(data)
-
-# Tokenize the data
+# Tokenize the data with labels
 def tokenize_function(example):
-    return tokenizer(example['text'], padding='max_length', truncation=True)
+    # Tokenize the input text
+    tokenized = tokenizer(example['text'], padding='max_length', truncation=True)
+    # Use input_ids as labels for training (labels should be identical to input_ids)
+    tokenized['labels'] = tokenized['input_ids'].copy()
+    return tokenized
 
 tokenized_datasets = dataset.map(tokenize_function, batched=True)
 
