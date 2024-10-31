@@ -9,46 +9,59 @@ class LZW:
     def __init__(self):
         self.max_table_size = 256
 
-    def encode(self, input_string):
-        dictionary = {chr(i): i for i in range(self.max_table_size)}
+    def encode(self, input_data):
+        dictionary = {i: i for i in range(self.max_table_size)}
         result = []
-        w = ''
+        w = None  # Start with an empty sequence
         code = self.max_table_size
 
-        for c in input_string:
-            wc = w + c
+        for c in input_data:
+            # Create a new sequence or pair `wc` by combining w and c
+            wc = (w, c) if w is not None else c
+            
             if wc in dictionary:
-                w = wc
+                w = wc  # Extend the sequence if it exists in the dictionary
             else:
-                result.append(dictionary[w])
-                dictionary[wc] = code
-                code += 1
-                w = c
+                # Append the code for w to the result
+                result.append(dictionary[w] if w is not None else c)
+                # Add new sequence wc to the dictionary if within code limit
+                if code < 4096:
+                    dictionary[wc] = code
+                    code += 1
+                w = c  # Start a new sequence with the current element
 
-        if w:
+        # Append the last sequence code
+        if w is not None:
             result.append(dictionary[w])
 
         return result
 
-    def decode(self, encoded):
-        dictionary = {i: chr(i) for i in range(self.max_table_size)}
-        w = chr(encoded[0])
-        result = [w]
+    def decode(self, encoded_data):
+        dictionary = {i: [i] for i in range(self.max_table_size)}
+        result = []
+        w = dictionary[encoded_data[0]].copy()
+        result.extend(w)
         code = self.max_table_size
 
-        for k in encoded[1:]:
+        for k in encoded_data[1:]:
             if k in dictionary:
                 entry = dictionary[k]
             elif k == code:
-                entry = w + w[0]
+                # Special case where entry is w + first element of w
+                entry = w + [w[0]]
             else:
-                raise ValueError("Invalid LZW code.")
-            result.append(entry)
-            dictionary[code] = w + entry[0]
-            code += 1
-            w = entry
+                raise ValueError("Invalid LZW code encountered during decoding.")
+            
+            result.extend(entry)
+            
+            # Add new entry to the dictionary if within size limit
+            if code < 4096:
+                dictionary[code] = w + [entry[0]]
+                code += 1
+            
+            w = entry  # Move forward in the sequence
 
-        return ''.join(result)
+        return result
 
 
 # Huffman Coding Class
@@ -61,7 +74,6 @@ class Node:
 
     def __lt__(self, other):
         return self.freq < other.freq
-
 
 class HuffmanCoding:
     def __init__(self):
@@ -106,38 +118,58 @@ class HuffmanCoding:
         self.make_codes_helper(root, current_code)
 
     def encode(self, text):
+        # Create the frequency dictionary and build the Huffman tree
         frequency = self.make_frequency_dict(text)
         heap = self.make_heap(frequency)
         self.merge_nodes(heap)
         self.make_codes(heap)
+
+        # Generate encoded text using the generated codes
         encoded_text = ''.join(self.codes[char] for char in text)
         return encoded_text
 
     def decode(self, encoded_text):
         current_code = ""
-        decoded_text = ""
+        decoded_text = []
+
         for bit in encoded_text:
             current_code += bit
             if current_code in self.reverse_mapping:
-                decoded_text += self.reverse_mapping[current_code]
-                current_code = ""
-        return decoded_text
+                decoded_text.append(self.reverse_mapping[current_code])
+                current_code = ""  # Reset for the next code
+
+        return ''.join(decoded_text)
 
 
 # Image Compression Functions
 def compress_image_lzw(image):
     img_data = np.array(image)
-    flat_data = img_data.flatten().astype(str).tolist()
+    flat_data = img_data.flatten().tolist()  # Flatten to a 1D list of integers
     lzw = LZW()
-    encoded_data = lzw.encode(''.join(flat_data))
+    encoded_data = lzw.encode(flat_data)
     return encoded_data
+
+def decompress_image_lzw(encoded_data, original_shape):
+    lzw = LZW()
+    decompressed_data = lzw.decode(encoded_data)
+    return np.array(decompressed_data).reshape(original_shape)
 
 def compress_image_huffman(image):
     img_data = np.array(image)
-    flat_data = img_data.flatten().astype(str).tolist()
+    flat_data = ''.join(map(chr, img_data.flatten()))  # Convert each pixel to a char
     huffman = HuffmanCoding()
-    encoded_data = huffman.encode(''.join(flat_data))
+    encoded_data = huffman.encode(flat_data)
     return encoded_data
+
+def decompress_image_huffman(encoded_data, original_shape):
+    huffman = HuffmanCoding()
+    decompressed_data = huffman.decode(encoded_data)
+    decompressed_data = [ord(char) for char in decompressed_data]  # Convert back to integers
+    return np.array(decompressed_data).reshape(original_shape)
+
+def quantize_image(image_path, num_colors=256):
+    img = Image.open(image_path).convert('P', palette=Image.ADAPTIVE, colors=num_colors)
+    return img
 
 def get_image_size(image_path):
     return os.path.getsize(image_path)
@@ -151,24 +183,6 @@ def calculate_compression_ratios(image_path, lzw_compressed_data, huffman_compre
     huffman_compression_ratio = original_size / huffman_size
 
     return lzw_compression_ratio, huffman_compression_ratio
-
-def save_compressed_data(filename, data):
-    with open(filename, 'wb') as f:
-        f.write(bytearray(data))
-
-def decompress_image_lzw(encoded_data, original_shape):
-    lzw = LZW()
-    decompressed_data = lzw.decode(encoded_data)
-    return np.array(list(map(int, decompressed_data))).reshape(original_shape)
-
-def decompress_image_huffman(encoded_data, original_shape):
-    huffman = HuffmanCoding()
-    decompressed_data = huffman.decode(encoded_data)
-    return np.array(list(map(int, decompressed_data))).reshape(original_shape)
-
-def quantize_image(image_path, num_colors=256):
-    img = Image.open(image_path).convert('P', palette=Image.ADAPTIVE, colors=num_colors)
-    return img
 
 # Main Execution
 if __name__ == "__main__":
@@ -191,10 +205,6 @@ if __name__ == "__main__":
     original_size = np.array(quantized_image).shape
     decompressed_lzw_data = decompress_image_lzw(lzw_compressed_data, original_size)
     decompressed_huffman_data = decompress_image_huffman(huffman_compressed_data, original_size)
-
-    # Save the compressed data
-    save_compressed_data("lzw_compressed.lzw", lzw_compressed_data)
-    save_compressed_data("huffman_compressed.huff", huffman_compressed_data)
 
     # Display results
     Image.fromarray(decompressed_lzw_data).show(title='Decompressed LZW Image')
