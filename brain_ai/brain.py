@@ -1,11 +1,27 @@
 from transformers import GPT2Tokenizer, GPT2LMHeadModel, Trainer, TrainingArguments
-from datasets import Dataset
+from datasets import Dataset, load_dataset, concatenate_datasets
 from os import path
 
 # Load GPT-2 tokenizer and model
 model_name = 'gpt2'
 tokenizer = GPT2Tokenizer.from_pretrained(model_name)
 model_path = '/content/python_world/brain_ai'
+
+
+dailydialog = load_dataset("daily_dialog", split="train")
+#personachat = load_dataset("bavard/personachat_truecased", split="train")
+
+# Function to format DailyDialog conversations
+def format_dailydialog(example):
+    conversation = ""
+    for i, turn in enumerate(example['dialog']):
+        speaker = "User" if i % 2 == 0 else "Bot"
+        conversation += f"{speaker}: {turn}\n"
+    return {'text': conversation.strip()}
+
+
+# Apply formatting function to each conversation in DailyDialog
+formatted_dailydialog = dailydialog.map(format_dailydialog)
 
 # Set pad_token to eos_token to avoid padding issues
 tokenizer.pad_token = tokenizer.eos_token
@@ -34,7 +50,10 @@ data = {
     ]
 }
 
-dataset = Dataset.from_dict(data)
+original_dataset = Dataset.from_dict(data)
+
+# Combine DailyDialog and original datasets
+combined_dataset = concatenate_datasets([original_dataset, formatted_dailydialog])
 
 # Tokenize the data with labels
 def tokenize_function(example):
@@ -42,7 +61,7 @@ def tokenize_function(example):
     tokenized['labels'] = tokenized['input_ids'].copy()
     return tokenized
 
-tokenized_datasets = dataset.map(tokenize_function, batched=True)
+tokenized_datasets = combined_dataset.map(tokenize_function, batched=True)
 
 # Split into training and evaluation sets for better learning
 split_datasets = tokenized_datasets.train_test_split(test_size=0.2)
@@ -52,12 +71,12 @@ eval_dataset = split_datasets['test']
 # Training arguments with gradient accumulation and more epochs
 training_args = TrainingArguments(
     output_dir=path.expanduser(model_path),
-    num_train_epochs=10,
-    per_device_train_batch_size=2,
+    num_train_epochs=12,
+    per_device_train_batch_size=4,
     gradient_accumulation_steps=2,  # Effective batch size of 4
-    save_steps=10_000,
+    save_steps=20_000,
     save_total_limit=2,
-    logging_steps=50,
+    logging_steps=500,
     evaluation_strategy="epoch"
 )
 
@@ -71,6 +90,27 @@ trainer = Trainer(
 
 # Train the model
 trainer.train()
+
+
+# Test the fine-tuned model with optimized generation parameters
+input_text = "User: How do I learn Python?\nBot:"
+inputs = tokenizer.encode(input_text, return_tensors='pt', padding='longest', truncation=True)
+
+# Generate response with optimized parameters
+outputs = model.generate(
+    inputs,
+    max_new_tokens=50,
+    num_return_sequences=1,
+    pad_token_id=tokenizer.eos_token_id,
+    temperature=0.8,  # slightly increased temperature for more variation
+    top_p=0.9,
+    top_k=20  # lower top_k for more randomness in selection
+)
+
+# Decode response
+response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+print(response)
+
 
 # Test the fine-tuned model with optimized generation parameters
 input_text = "User: How do I learn Python?\nBot:"
