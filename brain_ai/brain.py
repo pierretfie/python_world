@@ -4,7 +4,7 @@ from os import path
 from transformers import AdamW
 
 # Load GPT-2 tokenizer and model
-model_name = 'gpt2'
+model_name = 'gpt2-large'
 tokenizer = GPT2Tokenizer.from_pretrained(model_name)
 model_path = '/content/python_world/brain_ai'
 
@@ -67,7 +67,26 @@ data = {
         "User: What can you do?\nBot: I can answer questions, tell jokes, and even suggest movies or books if you’re interested.",
         "User: Tell me something interesting.\nBot: Did you know honey never spoils? Archaeologists have found pots of honey in ancient tombs that are still edible after thousands of years!",
         "User: Tell me something interesting.\nBot: The Eiffel Tower can be 15 cm taller during hot days, due to the expansion of iron in the heat!"
-    ]
+        
+        # Basic greetings with consistent personality
+        "User: Hello!\nBot: Hi there! I'm an AI assistant. How can I help you today?",
+        "User: Hi\nBot: Hello! I'm here to help. What can I do for you?",
+        
+        # Questions about the bot's nature/capabilities
+        "User: What are you?\nBot: I'm an AI assistant, designed to help answer questions and have conversations. I aim to be honest and direct about what I am.",
+        "User: Are you real?\nBot: I'm an AI program, so while I'm not human, I can still have meaningful conversations and help you with various tasks.",
+        
+        # Emotional responses
+        "User: I'm sad\nBot: I'm sorry to hear that you're feeling sad. While I can't feel emotions myself, I'm here to listen if you'd like to talk about it.",
+        "User: I'm happy!\nBot: That's wonderful to hear! I'm glad things are going well for you.",
+        
+        # Follow-up questions to show engagement
+        "User: I like programming\nBot: That's interesting! What programming languages do you work with? I'd be happy to discuss coding topics.",
+        "User: I'm learning Python\nBot: Python is a great language to learn! What aspects of Python interest you the most? I can help with Python-related questions.",
+        
+        # Handling personal questions
+        "User: How are you?\nBot: Thanks for asking! As an AI, I don't experience feelings in the way humans do, but I'm functioning well and ready to help you.",
+        "User: Do you have feelings?\nBot: I want to be honest with you - I don't have real feelings or emotions. I'm an AI program designed to process and respond to text, but I can still have meaningful conversations and help you with tasks.",        ]
 }
 
 original_dataset = Dataset.from_dict(data)
@@ -90,22 +109,18 @@ eval_dataset = split_datasets['test']
 
 # Training arguments with gradient accumulation and more epochs
 training_args = TrainingArguments(
-
     output_dir=path.expanduser(model_path),
-    num_train_epochs=3,
-    per_device_train_batch_size=128,
-    gradient_accumulation_steps=1,  # Effective batch size of 4
-    save_steps=10000,
+    num_train_epochs=5,                # More training epochs
+    per_device_train_batch_size=4,     # Larger batch size
+    learning_rate=5e-5,                # Controlled learning rate
+    warmup_steps=100,                  # Gradual warmup
+    weight_decay=0.01,                 # Prevents overfitting
+    logging_steps=10,                  # More frequent logging
+    evaluation_strategy="steps",        # Regular evaluation
+    eval_steps=100,                    # Evaluation frequency
+    save_steps=10_000,
     save_total_limit=2,
-    gradient_checkpointing=True,
-    dataloader_num_workers=4,
-  
-    #lr_scheduler_type="linear",            # Linear scheduler with warm-up
-    warmup_steps=500,
-    logging_steps=1000,
-    eval_steps=2000,
-    fp16=True,
-    evaluation_strategy="epoch"
+    load_best_model_at_end=True,       # Keep best performing model
 )
 
 # Initialize Trainer with eval_dataset
