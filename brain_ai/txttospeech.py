@@ -1,16 +1,26 @@
 from gtts import gTTS
+import pygame
 import os
-from playsound import playsound
+import time
 
 def text_to_speech(text, lang='en'):
+    # Create the audio file
     tts = gTTS(text=text, lang=lang)
-    # Save to a temporary file
     tts.save("temp_audio.mp3")
     
-    # Play the audio file
-    playsound("temp_audio.mp3")
+    # Initialize pygame mixer
+    pygame.mixer.init()
     
-    # Clean up the temporary file
+    # Load and play the audio
+    pygame.mixer.music.load("temp_audio.mp3")
+    pygame.mixer.music.play()
+    
+    # Wait for the audio to finish
+    while pygame.mixer.music.get_busy():
+        time.sleep(0.1)
+    
+    # Clean up
+    pygame.mixer.quit()
     os.remove("temp_audio.mp3")
 
 # Test the function
