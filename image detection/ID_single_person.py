@@ -1,20 +1,24 @@
 import numpy as np
+from deepface import DeepFace
 
-#function for ID
+# Function for identifying a single person
+def ID_single_person(img_path, embeddings_db, threshold=0.6):
+    # Generate embedding for the input image
+    result = DeepFace.represent(img_path=img_path, model_name='VGG-Face', enforce_detection=False)
+    embedding = np.array(result[0]["embedding"])  # Ensure embedding is a numeric array
 
-def ID_single_person(img_path,embeddings_db, threshold=0.6):
-    embedding = Deepface.represent(image_path, model_name= 'VGG-Face')
-
-    #compare embedding to embeddings in the database
+    # Compare embedding to embeddings in the database
     for person, embeddings in embeddings_db.items():
         for ref_embedding in embeddings:
-            distance - np.linalg.norm(np.array(ref_embedding) - np.array(embedding))
+            ref_embedding = np.array(ref_embedding)  # Ensure ref_embedding is also a numeric array
+            distance = np.linalg.norm(ref_embedding - embedding)
             if distance < threshold:
-                return person #match found
-            
-    return 'Unknown, no match found'
+                return person  # Match found
+    
+    return "Unknown, no match found"
 
 
-new_image_path = 'path/test_image_1.jpg'
+# Example usage
+new_image_path = '/content/drive/MyDrive/reference_images/Peter/DSC_0299~2.JPG'
 identified_person = ID_single_person(new_image_path, embeddings_db)
-print(f'person identified as {identified_person}')
+print(f'Person identified as {identified_person}')
