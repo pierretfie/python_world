@@ -14,7 +14,7 @@ def ID_single_person(img_path, embeddings_db, threshold=0.6):
             distance = np.linalg.norm(ref_embedding - embedding)
             if distance < threshold:
                 return person  # Match found
-    
+
     return "Unknown, no match found"
 
 

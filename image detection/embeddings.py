@@ -19,7 +19,7 @@ reference_folder = '/content/drive/MyDrive/reference_images'
 # Step 2: Add new embeddings to embeddings_db
 for person in os.listdir(reference_folder):
     person_folder = os.path.join(reference_folder, person)
-    
+
     # Ensure the person key exists in the dictionary
     if person not in embeddings_db:
         embeddings_db[person] = []
@@ -27,7 +27,7 @@ for person in os.listdir(reference_folder):
     # Loop through images in the person's folder
     for img_file in os.listdir(person_folder):
         img_path = os.path.join(person_folder, img_file)
-        
+
         # Generate embedding for the image
         result = DeepFace.represent(img_path=img_path, model_name="VGG-Face", enforce_detection=False)
         embedding = result[0]["embedding"]  # Extract only the embedding array
