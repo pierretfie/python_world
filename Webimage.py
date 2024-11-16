@@ -30,9 +30,12 @@ for img in os.listdir(input_path):
 
     if img.lower().endswith(('.jpg', '.jpeg', '.png', '.bmp', '.gif', '.webp')):
 
+        if img in os.listdir(output_path):
+            print(f"{img} already compressed")
+        else:
 
-        compressed_size = reduce_img(input_image_path, output_image_path, quality=80, target_height=target_height)
-        print(f'output image size:{output_image_path.strip(output_path)}:{compressed_size:.2f} Mbs')
+            compressed_size = reduce_img(input_image_path, output_image_path, quality=80, target_height=target_height)
+            print(f'output image size:{output_image_path.strip(output_path)}:{compressed_size:.2f} Mbs')
 
 
 
