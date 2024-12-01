@@ -15,8 +15,8 @@ def reduce_img(input_path, output_path, quality=80, target_height = None):
 
     compressed_size = os.path.getsize(output_path) / (1024 * 1024)
     return compressed_size
-input_path = os.path.expanduser('~/Desktop/coding space/peter_maina_portfolio/files/photography')
-output_path = os.path.expanduser('~/Desktop/coding space/peter_maina_portfolio/files/photography/photography_resized')
+input_path = os.path.expanduser('~/Desktop/coding space/ic_design_center/case-studies/files')
+output_path = os.path.expanduser('~/Desktop/coding space/ic_design_center/case-studies/files/resized')
 if not os.path.exists(output_path):
     os.makedirs(output_path)
 
