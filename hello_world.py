@@ -1,2 +1,2 @@
 word = 'hello world'
-prin
+print(word)
