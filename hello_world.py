@@ -1,5 +1,7 @@
 word = 'hello world'
 print(word)
 s = '*'
-for i in word:
-    print (f'{i} {s*}')
+
+for i in word
+    index = word.index(i)
+    print (f'{i} {s*index}')
