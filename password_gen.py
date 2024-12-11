@@ -4,15 +4,17 @@ import string
 import qrcode
 from os import path
 from colorama import Fore, Style
+import os
 
 print(Fore.RED+ '****************scripted by pierre-tfie********************')
 def password():
-    engine = pyttsx3.init(driverName='sapi5')
-    voice = engine.getProperty('voices')
-    engine.setProperty('voice',  voice[1].id)
-    engine.setProperty('rate', 150)
-    engine.say("hello, I'm Brain, you have requested a new password. What should be the password length?")
-    engine.runAndWait()
+    if os.name == 'nt':
+        engine = pyttsx3.init(driverName='sapi5')
+        voice = engine.getProperty('voices')
+        engine.setProperty('voice',  voice[1].id)
+        engine.setProperty('rate', 150)
+        engine.say("hello, I'm Brain, you have requested a new password. What should be the password length?")
+        engine.runAndWait()
     len=input(Fore.RESET+'ENTER LENGTH OF PASS TO GENERATE:\n')
     
     while True:
