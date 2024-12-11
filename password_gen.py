@@ -20,14 +20,17 @@ def password():
     while True:
         if len[0] not in string.digits:
             print(f'{Style.BRIGHT}{Fore.RED}ERROR!!ENTER A NUMBER:\n')
+            if os.name == 'nt':
 
-            engine.say('invalid input, reenter password length')
-            engine.runAndWait()
+                engine.say('invalid input, reenter password length')
+                engine.runAndWait()
             len=input(f'{Style.RESET_ALL}{Fore.RESET}ENTER LENGTH OF PASS TO GENERATE:\n')
         else:
-            engine.say('add the password usage')
-            engine.runAndWait()
-            break
+            if os.name == 'nt':
+
+                engine.say('add the password usage')
+                engine.runAndWait()
+                break
    
     filename = input('password use:\n')
     
@@ -45,11 +48,11 @@ def password():
 
 #store  the password in a QR code
 def create_qrcode():
-        
-    engine = pyttsx3.init(driverName='sapi5')
-    voice = engine.getProperty('voices')
-    engine.setProperty('voice',  voice[1].id)
-    engine.setProperty('rate', 150)
+    if os.name == 'nt':    
+        engine = pyttsx3.init(driverName='sapi5')
+        voice = engine.getProperty('voices')
+        engine.setProperty('voice',  voice[1].id)
+        engine.setProperty('rate', 150)
     data = gen_output[0]
     filename =  gen_output[1]
     len = gen_output[2]
@@ -65,6 +68,7 @@ def create_qrcode():
     img = qr.make_image(fill_color='black', back_color='aqua' )
     dir = path.expanduser('~/Documents')
     img.save(path.join(dir, filename))
+    if os.
     engine.say(f'your {len} length password has been generated and saved in your Documents, nice time securing your accounts')
     engine.runAndWait()
     
