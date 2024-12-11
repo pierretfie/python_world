@@ -68,9 +68,9 @@ def create_qrcode():
     img = qr.make_image(fill_color='black', back_color='aqua' )
     dir = path.expanduser('~/Documents')
     img.save(path.join(dir, filename))
-    if os.
-    engine.say(f'your {len} length password has been generated and saved in your Documents, nice time securing your accounts')
-    engine.runAndWait()
+    if os.name == 'nt':
+        engine.say(f'your {len} length password has been generated and saved in your Documents, nice time securing your accounts')
+        engine.runAndWait()     
     
 if __name__ == '__main__':
     gen_output = password()
