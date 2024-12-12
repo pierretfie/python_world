@@ -1,7 +1,7 @@
 import hashlib
 from password_gen import password
 data = password()
-print(data)
+#print(data)
 message = data[0]
 
 def hashdata ():
