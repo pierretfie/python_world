@@ -15,7 +15,8 @@ def hashdata ():
     # get the hexadecimal representation of the hash value
     hashed_data = hash_object.hexdigest()
     print(hashed_data)
-if __name__ == '__main__'
+if __name__ == '__main__:
+    hashdata()
    
 
 
