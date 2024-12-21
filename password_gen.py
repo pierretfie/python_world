@@ -1,4 +1,3 @@
-import pyttsx3
 import random
 import string
 import qrcode
@@ -8,28 +7,14 @@ import os
 
 print(Fore.RED+ '****************scripted by pierre-tfie********************')
 def password():
-    if os.name == 'nt':
-        engine = pyttsx3.init(driverName='sapi5')
-        voice = engine.getProperty('voices')
-        engine.setProperty('voice',  voice[1].id)
-        engine.setProperty('rate', 150)
-        engine.say("hello, I'm Brain, you have requested a new password. What should be the password length?")
-        engine.runAndWait()
     len=input(Fore.RESET+'ENTER LENGTH OF PASS TO GENERATE:\n')
     
     while True:
         if len[0] not in string.digits:
             print(f'{Style.BRIGHT}{Fore.RED}ERROR!!ENTER A NUMBER:\n')
-            if os.name == 'nt':
 
-                engine.say('invalid input, reenter password length')
-                engine.runAndWait()
             len=input(f'{Style.RESET_ALL}{Fore.RESET}ENTER LENGTH OF PASS TO GENERATE:\n')
         else:
-            if os.name == 'nt':
-
-                engine.say('add the password usage')
-                engine.runAndWait()
                 break
    
     filename = input('password use:\n')
@@ -43,16 +28,12 @@ def password():
     
     for i in range(int(len)):
         output += random.choice(combination)
+    print(f'{Style.DIM}{Fore.RED} {output}')
     return output, filename, len
 
 
 #store  the password in a QR code
 def create_qrcode():
-    if os.name == 'nt':    
-        engine = pyttsx3.init(driverName='sapi5')
-        voice = engine.getProperty('voices')
-        engine.setProperty('voice',  voice[1].id)
-        engine.setProperty('rate', 150)
     data = gen_output[0]
     filename =  gen_output[1]
     len = gen_output[2]
@@ -68,9 +49,8 @@ def create_qrcode():
     img = qr.make_image(fill_color='black', back_color='aqua' )
     dir = path.expanduser('~/Documents')
     img.save(path.join(dir, filename))
-    if os.name == 'nt':
-        engine.say(f'your {len} length password has been generated and saved in your Documents, nice time securing your accounts')
-        engine.runAndWait()     
+    print(f'{Style.NORMAL}{Fore.GREEN}your {len} length password has been generated and saved in your {dir}, nice time securing your accounts')
+    print(Style.RESET_ALL) 
     
 if __name__ == '__main__':
     gen_output = password()
