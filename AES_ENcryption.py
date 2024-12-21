@@ -7,16 +7,20 @@ def aescrypt():
     cipher = Fernet(key)
 
     # Encrypt data
-    plaintext = input(b"Enter data to encrypt: ")
-    ciphertext = cipher.encrypt(plaintext)
+    plaintext = input("Enter data to encrypt: ")
+    #conversion to bytes
+    plaintext_bytes = plaintext.encode('utf-8')
+    ciphertext = cipher.encrypt(plaintext_bytes)
     print(ciphertext)
-    return ciphertext, cipher
-
+    return ciphertext, key
 def aesdecrypt():
-    cipher = aescrypt[0]
-    ciphertext = aescrypt[1]
+    key = data[1]
+    cipher = Fernet(key)
+    ciphertext = data[0]
     # Decrypt data
     decrypted_text = cipher.decrypt(ciphertext)
     print(decrypted_text.decode())
 if __name__ == '__main__':
+    data = aescrypt()
+
     aesdecrypt()
