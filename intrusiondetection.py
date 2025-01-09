@@ -43,4 +43,13 @@ def extract_ip(log_line):
     return match.group(0) if match else None
 
 # Main function
-if 
+if __name__ == "__main__":
+    log_file = "network_logs.txt"  # Replace with your log file path
+    alerts = analyze_logs(log_file)
+
+    if alerts:
+        print("Intrusion Detection Alerts:")
+        for alert in alerts:
+            print(alert)
+    else:
+        print("No suspicious activities
