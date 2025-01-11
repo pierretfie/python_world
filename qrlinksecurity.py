@@ -48,5 +48,5 @@ def analyze_qr_code(image_path):
 # Main Function
 if __name__ == "__main__":
     # Path to QR code image
-    image_path = "qr_code_example.png"  # Replace with the path to your QR code image
+    image_path = "qr_code_example.png"  
     analyze_qr_code(image_path)
