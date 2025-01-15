@@ -61,3 +61,18 @@ def scrape_with_captcha():
 
         # Scrape data
         scraped_data = driver.find_element(By.ID, "data_container").text  # 
+Update the element ID
+        print(f"Scraped Data: {scraped_data}")
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+    finally:
+        # Cleanup
+        driver.quit()
+        if os.path.exists("captcha.png"):
+            os.remove("captcha.png")
+
+# Run the scraper
+if __name__ == "__main__":
+    scrape_with_captcha()
