@@ -22,3 +22,21 @@ def listen():
 # Example usage
 speak("Hello! How can I assist you?")
 command = listen()
+
+import openai
+
+# Set your OpenAI API key
+openai.api_key = "your_openai_api_key"
+
+def ai_response(query):
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=query,
+        max_tokens=150
+    )
+    return response['choices'][0]['text'].strip()
+
+# Example usage
+query = "What is the capital of France?"
+response = ai_response(query)
+speak(response)
