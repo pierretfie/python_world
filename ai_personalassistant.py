@@ -40,3 +40,16 @@ def ai_response(query):
 query = "What is the capital of France?"
 response = ai_response(query)
 speak(response)
+
+#task handler
+def get_weather(city):
+    api_key = "your_weather_api_key"
+    url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        weather = data['weather'][0]['description']
+        temp = data['main']['temp']
+        speak(f"The weather in {city} is {weather} with a temperature of {temp}°C.")
+    else:
+        speak("Sorry, I couldn't fetch the weather information.")
