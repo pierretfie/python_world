@@ -53,7 +53,9 @@ def get_weather(city):
         speak(f"The weather in {city} is {weather} with a temperature of {temp}°C.")
     else:
         speak("Sorry, I couldn't fetch the weather information.")
-#
+
+
+#command processing 
 def process_command(command):
     if "weather" in command:
         speak("Which city?")
