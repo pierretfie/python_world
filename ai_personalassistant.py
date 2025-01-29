@@ -53,3 +53,30 @@ def get_weather(city):
         speak(f"The weather in {city} is {weather} with a temperature of {temp}°C.")
     else:
         speak("Sorry, I couldn't fetch the weather information.")
+#
+def process_command(command):
+    if "weather" in command:
+        speak("Which city?")
+        city = listen()
+        if city:
+            get_weather(city)
+    elif "reminder" in command:
+        speak("What should I remind you about?")
+        task = listen()
+        if task:
+            speak("At what time?")
+            time = listen()
+            if time:
+                set_reminder(task, time)
+    elif "time" in command:
+        now = datetime.datetime.now().strftime("%H:%M")
+        speak(f"The current time is {now}.")
+    elif "search" in command:
+        speak("What do you want to search for?")
+        query = listen()
+        if query:
+            speak(f"Searching for {query}.")
+            os.system(f"start https://www.google.com/search?q={query}")
+    else:
+        response = ai_response(command)
+        speak(response)
