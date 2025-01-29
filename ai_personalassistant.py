@@ -55,6 +55,14 @@ def get_weather(city):
         speak("Sorry, I couldn't fetch the weather information.")
 
 
+#reminder
+import datetime
+
+def set_reminder(task, time):
+    speak(f"Reminder set for {task} at {time}.")
+    # Optionally, you can integrate this with a scheduler like `schedule` or `apscheduler`.
+
+
 #command processing 
 def process_command(command):
     if "weather" in command:
