@@ -1,3 +1,5 @@
+#user details db
+
 import sqlite3
 
 def create_database():
