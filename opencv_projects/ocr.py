@@ -1,5 +1,7 @@
+#optical character recognition(OCR) from images
 import cv2
 import pytesseract
+
 
 # Path to Tesseract-OCR executable (change this to match your installation)
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
